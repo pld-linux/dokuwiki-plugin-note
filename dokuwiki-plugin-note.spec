@@ -2,11 +2,12 @@
 Summary:	DokuWiki note plugin
 Name:		dokuwiki-plugin-%{plugin}
 Version:	20090615
-Release:	1
+Release:	2
 License:	GPL v2
 Group:		Applications/WWW
 Source0:	http://gauret.free.fr/fichiers/dokuwiki/dokuwiki-%{plugin}-%{version}.tgz
 # Source0-md5:	9121176dcb0c83ebd1d9008e949191ec
+Patch0:		toc-fix.patch
 URL:		http://www.dokuwiki.org/plugin:note
 BuildRequires:	rpmbuild(macros) >= 1.520
 Requires:	dokuwiki >= 20090214
@@ -24,6 +25,7 @@ This plugin allows you to create nice notes in your DokuWiki pages.
 %setup -qc
 mv %{plugin}/* .
 rm %{plugin}/.gitignore
+%patch0 -p1
 
 version=$(awk '/date/{print $2}' info.txt)
 if [ "$(echo "$version" | tr -d -)" != %{version} ]; then
