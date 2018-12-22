@@ -1,14 +1,18 @@
+%define		subver	2018-04-28
+%define		ver		%(echo %{subver} | tr -d -)
 %define		plugin		note
+%define		php_min_version 5.3.0
+%include	/usr/lib/rpm/macros.php
 Summary:	DokuWiki note plugin
 Name:		dokuwiki-plugin-%{plugin}
-Version:	20090615
-Release:	2
+Version:	%{ver}
+Release:	1
 License:	GPL v2
 Group:		Applications/WWW
-Source0:	http://gauret.free.fr/fichiers/dokuwiki/dokuwiki-%{plugin}-%{version}.tgz
-# Source0-md5:	9121176dcb0c83ebd1d9008e949191ec
+Source0:	https://github.com/LarsGit223/dokuwiki_note/archive/%{subver}/%{plugin}-%{subver}.tar.gz
+# Source0-md5:	827086b608ae9a2f5ce49dade8b4ed75
 Patch0:		toc-fix.patch
-URL:		http://www.dokuwiki.org/plugin:note
+URL:		https://www.dokuwiki.org/plugin:note
 BuildRequires:	rpmbuild(macros) >= 1.520
 Requires:	dokuwiki >= 20090214
 BuildArch:	noarch
@@ -23,11 +27,11 @@ This plugin allows you to create nice notes in your DokuWiki pages.
 
 %prep
 %setup -qc
-mv %{plugin}/* .
-rm %{plugin}/.gitignore
+mv dokuwiki_note-*/* .
 %patch0 -p1
 
-version=$(awk '/date/{print $2}' info.txt)
+%build
+version=$(awk '/^date/{print $2}' plugin.info.txt)
 if [ "$(echo "$version" | tr -d -)" != %{version} ]; then
 	: %%{version} mismatch
 	exit 1
@@ -37,6 +41,7 @@ fi
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT%{plugindir}
 cp -a . $RPM_BUILD_ROOT%{plugindir}
+%{__rm} $RPM_BUILD_ROOT%{plugindir}/{COPYING,README.rdoc}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -49,6 +54,7 @@ fi
 
 %files
 %defattr(644,root,root,755)
+%doc README.rdoc
 %dir %{plugindir}
 %{plugindir}/*.txt
 %{plugindir}/*.php
